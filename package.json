@@ -1,0 +1,27 @@
+{
+  "name": "workspace",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "artifacts/*",
+    "lib/*",
+    "lib/integrations/*",
+    "scripts"
+  ],
+  "scripts": {
+    "build": "npm run typecheck && npm run build --workspaces --if-present",
+    "typecheck:libs": "tsc --build",
+    "typecheck:apps": "npm run typecheck --workspace=@workspace/api-server && npm run typecheck --workspace=@workspace/carin && npm run typecheck --workspace=@workspace/mockup-sandbox && npm run typecheck --workspace=@workspace/scripts",
+    "typecheck": "npm run typecheck:libs && npm run typecheck:apps",
+    "dev:api": "npm run dev --workspace=@workspace/api-server",
+    "dev:web": "npm run dev --workspace=@workspace/carin"
+  },
+  "dependencies": {
+    "@replit/connectors-sdk": "^0.4.3"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.6",
+    "typescript": "~5.9.3"
+  }
+}

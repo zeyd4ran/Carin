@@ -1,0 +1,33 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Carin web (PowerShell)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev --workspace=@workspace/carin",
+      "env": {
+        "PORT": "5173",
+        "BASE_PATH": "/",
+        "LOCAL_API_PROXY": "1",
+        "API_PORT": "5000"
+      }
+    },
+    {
+      "name": "Carin API (PowerShell)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev --workspace=@workspace/api-server",
+      "env": {
+        "PORT": "5000",
+        "CARIN_STORAGE": "memory"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Carin full stack",
+      "configurations": ["Carin API (PowerShell)", "Carin web (PowerShell)"]
+    }
+  ]
+}

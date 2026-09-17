@@ -1,0 +1,278 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: career
+    description: Career profile and recommendation operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /career/profiles:
+    post:
+      operationId: createCareerProfile
+      tags: [career]
+      summary: Create a career profile
+      description: Stores an anonymous student profile and generates a deterministic recommendation snapshot.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CareerProfileInput"
+      responses:
+        "201":
+          description: Created career profile and recommendations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CareerDashboard"
+        "400":
+          description: Invalid career profile
+  /career/profiles/{profileId}:
+    get:
+      operationId: getCareerProfile
+      tags: [career]
+      summary: Get a career profile
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Career profile and recommendations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CareerDashboard"
+        "404":
+          description: Career profile not found
+  /career/profiles/{profileId}/progress:
+    patch:
+      operationId: updateCareerProgress
+      tags: [career]
+      summary: Update career plan progress
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CareerProgressInput"
+      responses:
+        "200":
+          description: Updated career profile and recommendations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CareerDashboard"
+        "404":
+          description: Career profile not found
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    CareerProfileInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+        degree:
+          type: string
+          minLength: 2
+        school:
+          type: string
+          minLength: 2
+        skills:
+          type: array
+          items:
+            type: string
+          minItems: 1
+        interests:
+          type: array
+          items:
+            type: string
+        resume:
+          type: ["string", "null"]
+      required:
+        - name
+        - degree
+        - school
+        - skills
+        - interests
+        - resume
+    CareerProgressInput:
+      type: object
+      properties:
+        completedPrep:
+          type: array
+          items:
+            type: string
+        savedProjects:
+          type: array
+          items:
+            type: string
+      required:
+        - completedPrep
+        - savedProjects
+    CareerMatch:
+      type: object
+      properties:
+        role:
+          type: string
+        company:
+          type: string
+        score:
+          type: integer
+        reason:
+          type: string
+      required: [role, company, score, reason]
+    SkillGap:
+      type: object
+      properties:
+        name:
+          type: string
+        current:
+          type: integer
+        required:
+          type: integer
+        label:
+          type: string
+      required: [name, current, required, label]
+    RoadmapStep:
+      type: object
+      properties:
+        week:
+          type: string
+        title:
+          type: string
+        detail:
+          type: string
+      required: [week, title, detail]
+    CareerProject:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        detail:
+          type: string
+        skills:
+          type: string
+        time:
+          type: string
+        level:
+          type: string
+      required: [id, name, detail, skills, time, level]
+    InterviewItem:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        detail:
+          type: string
+      required: [id, title, detail]
+    JobRole:
+      type: object
+      properties:
+        role:
+          type: string
+        detail:
+          type: string
+      required: [role, detail]
+    CareerDashboard:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        profile:
+          $ref: "#/components/schemas/CareerProfileInput"
+        matches:
+          type: array
+          items:
+            $ref: "#/components/schemas/CareerMatch"
+        skillGaps:
+          type: array
+          items:
+            $ref: "#/components/schemas/SkillGap"
+        roadmap:
+          type: array
+          items:
+            $ref: "#/components/schemas/RoadmapStep"
+        projects:
+          type: array
+          items:
+            $ref: "#/components/schemas/CareerProject"
+        interviewChecklist:
+          type: array
+          items:
+            $ref: "#/components/schemas/InterviewItem"
+        jobRoles:
+          type: array
+          items:
+            $ref: "#/components/schemas/JobRole"
+        completedPrep:
+          type: array
+          items:
+            type: string
+        savedProjects:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - profile
+        - matches
+        - skillGaps
+        - roadmap
+        - projects
+        - interviewChecklist
+        - jobRoles
+        - completedPrep
+        - savedProjects
+        - createdAt
+        - updatedAt
+

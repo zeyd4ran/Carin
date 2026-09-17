@@ -1,0 +1,21 @@
+The Netlify deploy errored, with the following guidance provided:
+
+The build fails at line 74 because the PORT environment variable is required by artifacts/carin/vite.config.ts but is not set in the Netlify build environment.
+
+Solution:
+
+Add the PORT environment variable to your Netlify site's environment variables. You can do this via:
+
+Netlify UI: Site configuration → Environment variables → Add a variable with the key PORT and an appropriate value (e.g., 3000 or 8080).
+netlify.toml:
+[build.environment]
+  PORT = "3000"
+If PORT should not actually be required during a static Vite build (i.e., it's only needed at runtime), review artifacts/carin/vite.config.ts and make the PORT variable optional, providing a fallback value:
+
+const port = process.env.PORT ?? '3000';
+The relevant error logs are:
+
+Line 0: build-image version: 969defd95f3977f8de9cb1f48802a7e6f3d8c0b3 (noble-new-builds) Line 1: buildbot version: 83c28923de93ddb953d413d973fd22fbe7738eb9 Line 2: Fetching cached dependencies Line 3: Failed to fetch cache, continuing with build Line 4: Fetching build zip file Line 5: Starting to prepare the repo for build Line 6: Custom publish path detected. Proceeding with the specified path: 'artifacts/carin/dist' Line 7: Custom build command detected. Proceeding with the specified command: 'pnpm --filter @workspace/carin... run build' Line 8: Installing dependencies Line 9: mise ~/.config/mise/config.toml tools: python@3.14.3 Line 10: mise ~/.config/mise/config.toml tools: ruby@3.4.8 Line 11: mise ~/.config/mise/config.toml tools: go@1.26.2 Line 12: Downloading and installing node v24.21.0... Line 13: Downloading https://nodejs.org/dist/v24.21.0/node-v24.21.0-linux-x64.tar.xz... Line 62: ​Line 63: ❯ Context Line 64: production Line 65: ​Line 66: build.command from netlify.toml
+Line 67: ──────────────────────────────────────────────────────────────── Line 68: ​Line 69: $ pnpm --filter @workspace/carin... run build Line 70: Scope: 2 of 9 workspace projects Line 71: artifacts/carin build$ vite build --config vite.config.ts Line 72: artifacts/carin build: failed to load config from /opt/build/repo/artifacts/carin/vite.config.ts[ Line 73: artifacts/carin build: error during build: Line 74: artifacts/carin build: Error: PORT environment variable is required but was not provided. Line 75: artifacts/carin build: at file:///opt/build/repo/artifacts/carin/node_modules/.vite-temp/vite.confi Line 76: artifacts/carin build: at ModuleJob.run (node:internal/modules/esm/module_job:561:25) Line 77: artifacts/carin build: at async node:internal/modules/esm/loader:647:26 Line 78: artifacts/carin build: at async loadConfigFromBundledFile (file:///opt/build/repo/node_modules/.pnp Line 79: artifacts/carin build: at async bundleAndLoadConfigFile (file:///opt/build/repo/node_modules/.pnpm/ Line 80: artifacts/carin build: at async loadConfigFromFile (file:///opt/build/repo/node_modules/.pnpm/vite@ Line 81: artifacts/carin build: at async resolveConfig (file:///opt/build/repo/node_modules/.pnpm/vite@7.3.6 Line 82: artifacts/carin build: at async createBuilder (file:///opt/build/repo/node_modules/.pnpm/vite@7.3.6 Line 83: artifacts/carin build: at async CAC.<anonymous> (file:///opt/build/repo/node_modules/.pnpm/vite@7.3 Line 84: artifacts/carin build: Failed Line 85: /opt/build/repo/artifacts/carin: Line 86:  ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/carin@0.0.0 build: vite build --config vite.config.ts Line 87: Exit status 1 Line 88: Failed during stage 'building site': Build script returned non-zero exit code: 2 Line 89: ​Line 90: "build.command" failed
+Line 91: ──────────────────────────────────────────────────────────────── Line 92: ​Line 93: Error message Line 94: Command failed with exit code 1: pnpm --filter @workspace/carin... run build Line 95: ​Line 96: Error location Line 97: In build.command from netlify.toml: Line 98: pnpm --filter @workspace/carin... run build Line 99: ​Line 100: Resolved config Line 101: build: Line 102: command: pnpm --filter @workspace/carin... run build Line 103: commandOrigin: config Line 104: publish: /opt/build/repo/artifacts/carin/dist Line 105: publishOrigin: config Line 106: Build failed due to a user error: Build script returned non-zero exit code: 2 Line 107: Failing build: Failed to build site Line 108: Finished processing build request in 15.31s
+

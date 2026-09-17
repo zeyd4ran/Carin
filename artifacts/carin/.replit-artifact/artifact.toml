@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Carin"
+description = "An AI-powered skill and career recommendation platform that helps students turn their interests, experience, and academic background into a clear next step."
+version = "1.0.0"
+id = "artifacts/carin"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23879
+
+[services.development]
+run = "npm run dev --workspace=@workspace/carin"
+
+[services.production]
+build = [ "npm", "run", "build", "--workspace=@workspace/carin" ]
+serve = "static"
+publicDir = "artifacts/carin/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23879"
+BASE_PATH = "/"
