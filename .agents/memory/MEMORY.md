@@ -1,0 +1,2 @@
+- [GitHub publishing](github-publish.md) — Use the attached connector’s proxy and verify the final Git tree when no Git remote is configured.
+- [Npm registry verification](npm-registry-verification.md) — Shell npm_config_registry can override project .npmrc; unset it when reproducing public CI installs.
